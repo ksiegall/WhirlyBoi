@@ -8,9 +8,10 @@ class Motor:
     def __init__(self, direction_pin: int, speed_pin: int, flip_dir:bool=False):
         self._dirPin = Pin(direction_pin, Pin.OUT)
         self._speedPin = PWM(Pin(speed_pin, Pin.OUT))
+        self._speedPin.freq(2000)
         self.flip_dir = flip_dir
         
-        self._set_direction(1)
+        self._dirPin.value(1)
         self._MAX_PWM = 65534 # Motor holds when actually at full power
 
     def set_effort(self, effort: float):
