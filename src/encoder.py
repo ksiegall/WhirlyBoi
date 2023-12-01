@@ -5,9 +5,9 @@ import rp2
 import time
 
 class Encoder:
-    _gear_ratio = (30/14) * (28/16) * (36/9) * (26/8) # 48.75
-    _counts_per_motor_shaft_revolution = 12
-    resolution = _counts_per_motor_shaft_revolution * _gear_ratio # 585
+    _gear_ratio = 18.8 
+    _counts_per_motor_shaft_revolution = 11
+    resolution = _counts_per_motor_shaft_revolution * _gear_ratio * 4# 206.8 ticks/rev
     
     def __init__(self, index, encAPin, encBPin):
         """

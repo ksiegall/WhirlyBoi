@@ -1,5 +1,5 @@
 import time
-from .controller import Controller
+from controller import Controller
 
 """
 PID controller with exit condition

@@ -1,9 +1,9 @@
-from .motor import Motor
-from .encoder import Encoder
+from motor import Motor
+from encoder import Encoder
 from machine import Timer
-from .controller import Controller
-from .pid import PID
-from .timeout import Timeout
+from controller import Controller
+from pid import PID
+from timeout import Timeout
 import time
 
 class EncodedMotor:
@@ -114,7 +114,7 @@ class EncodedMotor:
         :rtype: float
         """
         # Convert from counts per 20ms to rpm (60 sec/min, 50 Hz)
-        return self.speed*(60*50)/self._encoder.resolution
+        return (self.speed*(60*50))/self._encoder.resolution
 
     def set_speed(self, speed_rpm: float = None):
         """
