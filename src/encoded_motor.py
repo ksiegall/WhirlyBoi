@@ -8,8 +8,8 @@ import time
 
 class EncodedMotor:
 
-    _DEFAULT_LEFT_MOTOR_INSTANCE = None
-    _DEFAULT_RIGHT_MOTOR_INSTANCE = None
+    _DEFAULT_MOTOR_ONE_INSTANCE = None
+    _DEFAULT_MOTOR_TWO_INSTANCE = None
     _DEFAULT_MOTOR_THREE_INSTANCE = None
     _DEFAULT_MOTOR_FOUR_INSTANCE = None
 
@@ -22,28 +22,28 @@ class EncodedMotor:
         :param index: The index of the motor to get; 1 for left, 2 for right, 3 for motor 3, 4 for motor 4
         :type index: int
         """
-        if index == 1:
-            if cls._DEFAULT_LEFT_MOTOR_INSTANCE is None:
-                cls._DEFAULT_LEFT_MOTOR_INSTANCE = cls(
+        if index == 2:
+            if cls._DEFAULT_MOTOR_ONE_INSTANCE is None:
+                cls._DEFAULT_MOTOR_ONE_INSTANCE = cls(
                     Motor(6, 7, flip_dir=True),
                     Encoder(0, 4, 5)
                 )
-            motor = cls._DEFAULT_LEFT_MOTOR_INSTANCE
-        elif index == 2:
-            if cls._DEFAULT_RIGHT_MOTOR_INSTANCE is None:
-                cls._DEFAULT_RIGHT_MOTOR_INSTANCE = cls(
+            motor = cls._DEFAULT_MOTOR_ONE_INSTANCE
+        elif index == 4:
+            if cls._DEFAULT_MOTOR_TWO_INSTANCE is None:
+                cls._DEFAULT_MOTOR_TWO_INSTANCE = cls(
                     Motor(14, 15),
                     Encoder(1, 12, 13)
                 )
-            motor = cls._DEFAULT_RIGHT_MOTOR_INSTANCE
-        elif index == 3:
+            motor = cls._DEFAULT_MOTOR_TWO_INSTANCE
+        elif index == 1:
             if cls._DEFAULT_MOTOR_THREE_INSTANCE is None:
                 cls._DEFAULT_MOTOR_THREE_INSTANCE = cls(
                     Motor(2, 3),
                     Encoder(2, 0, 1)
                 )
             motor = cls._DEFAULT_MOTOR_THREE_INSTANCE
-        elif index == 4:
+        elif index == 3:
             if cls._DEFAULT_MOTOR_FOUR_INSTANCE is None:
                 cls._DEFAULT_MOTOR_FOUR_INSTANCE = cls(
                     Motor(10, 11, flip_dir=True),
