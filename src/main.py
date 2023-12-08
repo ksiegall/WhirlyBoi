@@ -15,14 +15,25 @@ motor_four = EncodedMotor.get_default_encoded_motor(4)
 
 motors = [motor_one, motor_two, motor_three, motor_four]
 
+for motor in motors:
+    motor.set_speed(0)
+
+# Default speed of the motors per pico
+defaultSpeed = 265
+
+# Dictionary of notes and their corresponding motor, pico and speed
 noteDictionary = {
+
+    # Hard Stop
+    36: (0, 2, 0), # Pico 0, Motor Three (index 2), 0 rpm
+    38: (0, 2, 100), # Pico 0, Motor Four (index 2), 100 rpm
 
     # Fundamentals
 
-    65: (0, 0, 230), # Pico 0, Motor One (index 0), 230 rpm
-    66: (0, 1, 230), # Pico 0, Motor Two (index 1), 230 rpm
-    67: (0, 2, 230), # Pico 0, Motor Three (index 2), 230 rpm
-    68: (0, 3, 230), # Pico 0, Motor Four (index 3), 230 rpm
+    65: (0, 0, 200), # Pico 0, Motor One (index 0), 230 rpm
+    66: (0, 1, 200), # Pico 0, Motor Two (index 1), 230 rpm
+    67: (0, 2, 200), # Pico 0, Motor Three (index 2), 230 rpm
+    68: (0, 3, 200), # Pico 0, Motor Four (index 3), 230 rpm
 
     69: (1, 0, 230), # Pico 1, Motor One (index 0), 230 rpm
     70: (1, 1, 230), # Pico 1, Motor Two (index 1), 230 rpm
@@ -65,19 +76,22 @@ while True:
     if poll_obj.poll(0):
         # Read one character from sys.stdin
         ch = sys.stdin.read(2)
+        note = ord(ch[0])
+        velocity = ord(ch[1])
         # Toggle the state of the LED
         # Print a message indicating that the LED has been toggled
         print (f"Note: {ord(ch[0])} Velocity: {ord(ch[1])}")
-        board.led_blink(ord(ch[0]))
+        
         # If the character is a valid note
-        if ord(ch[0]) in noteDictionary.keys():
+        if note in noteDictionary.keys():
+            noteData = noteDictionary[note]
             # If the note can be played on this pico
-            if noteDictionary[ord(ch[0])][0] == thisPico:
-                # If the velocity is 0, stop the motor
-                if ord(ch[1]) == 0:
-                    motor_one.set_speed(0)
+            if noteData[0] == thisPico:
+                # If the velocity is 0, stop the note by setting a default speed
+                if velocity == 0:
+                    motors[noteData[1]].set_speed(defaultSpeed)
                 else:
                     # Set the speed of the motor based on the dictionary
-                    motors[noteDictionary[ord(ch[0])][1]].set_speed(noteDictionary[ord(ch[0])][2])
+                    motors[noteData[1]].set_speed(noteData[2])
     # # Small delay to avoid high CPU usage in the loop
     # time.sleep(0.1)
