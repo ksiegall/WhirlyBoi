@@ -70,7 +70,7 @@ while True:
         print (f"Note: {ord(ch[0])} Velocity: {ord(ch[1])}")
         board.led_blink(ord(ch[0]))
         # If the character is a valid note
-        if noteDictionary.keys().__contains__(ord(ch[0])):
+        if ord(ch[0]) in noteDictionary.keys():
             # If the note can be played on this pico
             if noteDictionary[ord(ch[0])][0] == thisPico:
                 # If the velocity is 0, stop the motor
