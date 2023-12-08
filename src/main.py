@@ -15,13 +15,44 @@ motor_four = EncodedMotor.get_default_encoded_motor(4)
 
 motors = [motor_one, motor_two, motor_three, motor_four]
 
-# while True:
-#     whichMotor, speed = input("Which motor? "), input("Speed? ")
-#     whichMotor = int(whichMotor)-1
-#     speed = float(speed)
-#     motors[whichMotor].set_speed(speed)
-#     # print(f"Position: {motor_one.get_position_counts()}\tSpeed: {motor_one.get_speed()}")
-#     # time.sleep(0.1)
+noteDictionary = {
+
+    # Fundamentals
+
+    65: (0, 0, 230), # Pico 0, Motor One (index 0), 230 rpm
+    66: (0, 1, 230), # Pico 0, Motor Two (index 1), 230 rpm
+    67: (0, 2, 230), # Pico 0, Motor Three (index 2), 230 rpm
+    68: (0, 3, 230), # Pico 0, Motor Four (index 3), 230 rpm
+
+    69: (1, 0, 230), # Pico 1, Motor One (index 0), 230 rpm
+    70: (1, 1, 230), # Pico 1, Motor Two (index 1), 230 rpm
+    71: (1, 2, 230), # Pico 1, Motor Three (index 2), 230 rpm
+    72: (1, 3, 230), # Pico 1, Motor Four (index 3), 230 rpm
+
+    73: (2, 0, 230), # Pico 2, Motor One (index 0), 230 rpm
+    74: (2, 1, 230), # Pico 2, Motor Two (index 1), 230 rpm
+    75: (2, 2, 230), # Pico 2, Motor Three (index 2), 230 rpm
+    76: (2, 3, 230), # Pico 2, Motor Four (index 3), 230 rpm
+    
+    # First Harmonics
+
+    77: (0, 0, 460), # Pico 0, Motor One (index 0), 460 rpm
+    78: (0, 1, 460), # Pico 0, Motor Two (index 1), 460 rpm
+    79: (0, 2, 460), # Pico 0, Motor Three (index 2), 460 rpm
+    80: (0, 3, 460), # Pico 0, Motor Four (index 3), 460 rpm
+
+    81: (1, 0, 460), # Pico 1, Motor One (index 0), 460 rpm
+    82: (1, 1, 460), # Pico 1, Motor Two (index 1), 460 rpm
+    83: (1, 2, 460), # Pico 1, Motor Three (index 2), 460 rpm
+    84: (1, 3, 460), # Pico 1, Motor Four (index 3), 460 rpm
+
+    85: (2, 0, 460), # Pico 2, Motor One (index 0), 460 rpm
+    86: (2, 1, 460), # Pico 2, Motor Two (index 1), 460 rpm
+    87: (2, 2, 460), # Pico 2, Motor Three (index 2), 460 rpm
+    88: (2, 3, 460), # Pico 2, Motor Four (index 3), 460 rpm
+}
+
+thisPico = 0 # This is the index of the pico that this script is running on
 
 # Create an instance of a polling object 
 poll_obj = select.poll()
@@ -38,5 +69,15 @@ while True:
         # Print a message indicating that the LED has been toggled
         print (f"Note: {ord(ch[0])} Velocity: {ord(ch[1])}")
         board.led_blink(ord(ch[0]))
-    # Small delay to avoid high CPU usage in the loop
-    time.sleep(0.1)
+        # If the character is a valid note
+        if noteDictionary.keys().__contains__(ord(ch[0])):
+            # If the note can be played on this pico
+            if noteDictionary[ord(ch[0])][0] == thisPico:
+                # If the velocity is 0, stop the motor
+                if ord(ch[1]) == 0:
+                    motor_one.set_speed(0)
+                else:
+                    # Set the speed of the motor based on the dictionary
+                    motors[noteDictionary[ord(ch[0])][1]].set_speed(noteDictionary[ord(ch[0])][2])
+    # # Small delay to avoid high CPU usage in the loop
+    # time.sleep(0.1)
