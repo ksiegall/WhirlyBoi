@@ -96,8 +96,8 @@
 #     # # Small delay to avoid high CPU usage in the loop
 #     # time.sleep(0.1)
 
+
 from encoded_motor import EncodedMotor
-import time
 
 motor_one = EncodedMotor.get_default_encoded_motor(1)
 motor_two = EncodedMotor.get_default_encoded_motor(2)
@@ -107,9 +107,9 @@ motor_four = EncodedMotor.get_default_encoded_motor(4)
 motors = [motor_one, motor_two, motor_three, motor_four]
 
 while True:
-    whichMotor, speed = input("Which motor? "), input("Speed? ")
-    whichMotor = int(whichMotor)-1
-    speed = float(speed)
+    whichMotor = int(input("Which motor? ")) - 1
+    speed = float(input("Speed? "))
+
+    print(f"Speed: {motors[whichMotor].get_speed()}, Position: {motors[whichMotor].get_position_counts()}")
+
     motors[whichMotor].set_speed(speed)
-    # print(f"Position: {motor_one.get_position_counts()}\tSpeed: {motor_one.get_speed()}")
-    # time.sleep(0.1)
