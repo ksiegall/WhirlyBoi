@@ -19,7 +19,16 @@ for motor in motors:
     motor.set_speed(0)
 
 # Default speed of the motors per pico
-defaultSpeed = 265
+defaultSpeedPerMotor = [[135,150,157.5,165],
+                        [265,265,265,265],
+                        [265,265,265,265]]
+
+def startup_sequence():
+    for i in range(20):
+        # take 20 seconds to start up
+        for motor in motors:
+            motor.set_speed((i/20)*defaultSpeedPerMotor[thisPico][motor.index])
+            time.sleep(1)
 
 # Dictionary of notes and their corresponding motor, pico and speed
 noteDictionary = {
@@ -30,12 +39,12 @@ noteDictionary = {
 
     # Fundamentals
 
-    65: (0, 0, 200), # Pico 0, Motor One (index 0), 230 rpm
-    66: (0, 1, 200), # Pico 0, Motor Two (index 1), 230 rpm
-    67: (0, 2, 200), # Pico 0, Motor Three (index 2), 230 rpm
-    68: (0, 3, 200), # Pico 0, Motor Four (index 3), 230 rpm
+    60: (0, 0, 90), # Pico 0, Motor One (index 0), 230 rpm
+    61: (0, 1, 100), # Pico 0, Motor Two (index 1), 230 rpm
+    62: (0, 2, 105), # Pico 0, Motor Three (index 2), 230 rpm
+    63: (0, 3, 110), # Pico 0, Motor Four (index 3), 230 rpm
 
-    69: (1, 0, 230), # Pico 1, Motor One (index 0), 230 rpm
+    64: (1, 0, 230), # Pico 1, Motor One (index 0), 230 rpm
     70: (1, 1, 230), # Pico 1, Motor Two (index 1), 230 rpm
     71: (1, 2, 230), # Pico 1, Motor Three (index 2), 230 rpm
     72: (1, 3, 230), # Pico 1, Motor Four (index 3), 230 rpm
@@ -78,6 +87,17 @@ while True:
         ch = sys.stdin.read(2)
         note = ord(ch[0])
         velocity = ord(ch[1])
+        if note == 97:
+            startup_sequence()
+            break
+
+while True:
+    # Check if there is any data available on sys.stdin without blocking
+    if poll_obj.poll(0):
+        # Read one character from sys.stdin
+        ch = sys.stdin.read(2)
+        note = ord(ch[0])
+        velocity = ord(ch[1])
         # Toggle the state of the LED
         # Print a message indicating that the LED has been toggled
         print (f"Note: {ord(ch[0])} Velocity: {ord(ch[1])}")
@@ -89,7 +109,7 @@ while True:
             if noteData[0] == thisPico:
                 # If the velocity is 0, stop the note by setting a default speed
                 if velocity == 0:
-                    motors[noteData[1]].set_speed(defaultSpeed)
+                    motors[noteData[1]].set_speed(defaultSpeedPerMotor[thisPico][noteData[1]])
                 else:
                     # Set the speed of the motor based on the dictionary
                     motors[noteData[1]].set_speed(noteData[2])
