@@ -32,8 +32,8 @@ class Motor:
         effort = max(0,min(effort,1))
         self._speedPin.duty_u16(int(effort*self._MAX_PWM))
 
-    def _set_direction(self, direction: int):
-        if self.flip_dir:
-            self._dirPin.value(not direction)
-        else:
-            self._dirPin.value(direction)
+    # def _set_direction(self, direction: int):
+    #     if self.flip_dir:
+    #         self._dirPin.value(not direction)
+    #     else:
+    #         self._dirPin.value(direction)

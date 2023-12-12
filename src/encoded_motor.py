@@ -22,32 +22,32 @@ class EncodedMotor:
         :param index: The index of the motor to get; 1 for left, 2 for right, 3 for motor 3, 4 for motor 4
         :type index: int
         """
-        if index == 2:
+        if index == 1:
             if cls._DEFAULT_MOTOR_ONE_INSTANCE is None:
                 cls._DEFAULT_MOTOR_ONE_INSTANCE = cls(
-                    Motor(6, 7, flip_dir=True),
-                    Encoder(0, 4, 5)
+                    Motor(direction_pin=2, speed_pin=3),
+                    Encoder(index=0, encAPin=0, encBPin=1)
                 )
             motor = cls._DEFAULT_MOTOR_ONE_INSTANCE
-        elif index == 4:
+        elif index == 2:
             if cls._DEFAULT_MOTOR_TWO_INSTANCE is None:
                 cls._DEFAULT_MOTOR_TWO_INSTANCE = cls(
-                    Motor(14, 15),
-                    Encoder(1, 12, 13)
+                    Motor(direction_pin=6, speed_pin=7),
+                    Encoder(index=1, encAPin=4, encBPin=5)
                 )
             motor = cls._DEFAULT_MOTOR_TWO_INSTANCE
-        elif index == 1:
+        elif index == 3:
             if cls._DEFAULT_MOTOR_THREE_INSTANCE is None:
                 cls._DEFAULT_MOTOR_THREE_INSTANCE = cls(
-                    Motor(2, 3),
-                    Encoder(2, 0, 1)
+                    Motor(direction_pin=10, speed_pin=11),
+                    Encoder(index=2, encAPin=8, encBPin=9)
                 )
             motor = cls._DEFAULT_MOTOR_THREE_INSTANCE
-        elif index == 3:
+        elif index == 4:
             if cls._DEFAULT_MOTOR_FOUR_INSTANCE is None:
                 cls._DEFAULT_MOTOR_FOUR_INSTANCE = cls(
-                    Motor(10, 11, flip_dir=True),
-                    Encoder(3, 8, 9)
+                    Motor(direction_pin=14, speed_pin=15),
+                    Encoder(index=3, encAPin=12, encBPin=13)
                 )
             motor = cls._DEFAULT_MOTOR_FOUR_INSTANCE
         else:
@@ -155,61 +155,61 @@ class EncodedMotor:
             self._motor.set_effort(effort)
         self.prev_position = current_position
 
-    def rotate(self, degrees: float, max_effort: float = 0.5, timeout: float = None, main_controller: Controller = None) -> bool:
-        """
-        Rotate the motor by some number of degrees, and exit function when distance has been traveled.
-        Max_effort is bounded from -1 (reverse at full speed) to 1 (forward at full speed)
+    # def rotate(self, degrees: float, max_effort: float = 0.5, timeout: float = None, main_controller: Controller = None) -> bool:
+    #     """
+    #     Rotate the motor by some number of degrees, and exit function when distance has been traveled.
+    #     Max_effort is bounded from -1 (reverse at full speed) to 1 (forward at full speed)
 
-        :param degrees: The distance for the motor to rotate (In Degrees)
-        :type degrees: float
-        :param max_effort: The max effort for which the robot to travel (Bounded from -1 to 1). Default is half effort forward
-        :type max_effort: float
-        :param timeout: The amount of time before the robot stops trying to move forward and continues to the next step (In Seconds)
-        :type timeout: float
-        :param main_controller: The main controller, for handling the motor's rotation
-        :type main_controller: Controller
-        :return: if the distance was reached before the timeout
-        :rtype: bool
-        """
-        # ensure effort is always positive while distance could be either positive or negative
-        if max_effort < 0:
-            max_effort *= -1
-            degrees *= -1
+    #     :param degrees: The distance for the motor to rotate (In Degrees)
+    #     :type degrees: float
+    #     :param max_effort: The max effort for which the robot to travel (Bounded from -1 to 1). Default is half effort forward
+    #     :type max_effort: float
+    #     :param timeout: The amount of time before the robot stops trying to move forward and continues to the next step (In Seconds)
+    #     :type timeout: float
+    #     :param main_controller: The main controller, for handling the motor's rotation
+    #     :type main_controller: Controller
+    #     :return: if the distance was reached before the timeout
+    #     :rtype: bool
+    #     """
+    #     # ensure effort is always positive while distance could be either positive or negative
+    #     if max_effort < 0:
+    #         max_effort *= -1
+    #         degrees *= -1
 
-        time_out = Timeout(timeout)
-        starting = self.get_position_counts()
+    #     time_out = Timeout(timeout)
+    #     starting = self.get_position_counts()
 
-        degrees *= self._encoder.resolution/360
+    #     degrees *= self._encoder.resolution/360
 
-        if main_controller is None:
-            main_controller = PID(
-                kp = 0.1,
-                ki = 0.065,
-                kd = 0.0275,
-                min_output = 0.3,
-                max_output = max_effort,
-                max_integral = 25,
-                tolerance = 3,
-                tolerance_count = 3,
-            )
+    #     if main_controller is None:
+    #         main_controller = PID(
+    #             kp = 0.1,
+    #             ki = 0.065,
+    #             kd = 0.0275,
+    #             min_output = 0.3,
+    #             max_output = max_effort,
+    #             max_integral = 25,
+    #             tolerance = 3,
+    #             tolerance_count = 3,
+    #         )
 
 
-        while True:
+    #     while True:
 
-            # calculate the distance traveled
-            delta = self.get_position_counts() - starting
+    #         # calculate the distance traveled
+    #         delta = self.get_position_counts() - starting
 
-            # PID for distance
-            error = degrees - delta
-            effort = main_controller.update(error)
+    #         # PID for distance
+    #         error = degrees - delta
+    #         effort = main_controller.update(error)
             
-            if main_controller.is_done() or time_out.is_done():
-                break
+    #         if main_controller.is_done() or time_out.is_done():
+    #             break
 
-            self.set_effort(effort)
+    #         self.set_effort(effort)
 
-            time.sleep(0.01)
+    #         time.sleep(0.01)
 
-        self.set_effort(0)
+    #     self.set_effort(0)
 
-        return not time_out.is_done()
+    #     return not time_out.is_done()
