@@ -80,14 +80,14 @@ class PID(Controller):
         self._handle_exit_condition(error)
 
         integral = self.prev_integral + error * timestep
-
-        if self.kp * error + self.ki * self.prev_integral + self.kd * derivative > self.max_output:
-            integral = self.prev_integral
         
         if self.max_integral is not None:
             integral = max(-self.max_integral, min(self.max_integral, integral))
 
         derivative = (error - self.prev_error) / timestep
+
+        if self.kp * error + self.ki * self.prev_integral + self.kd * derivative > self.max_output:
+            integral = self.prev_integral
 
         # derive output
         output = self.kp * error + self.ki * integral + self.kd * derivative

@@ -26,42 +26,46 @@ class EncodedMotor:
             if cls._DEFAULT_MOTOR_ONE_INSTANCE is None:
                 cls._DEFAULT_MOTOR_ONE_INSTANCE = cls(
                     Motor(direction_pin=2, speed_pin=3),
-                    Encoder(index=0, encAPin=0, encBPin=1)
+                    Encoder(index=0, encAPin=0, encBPin=1),
+                    0
                 )
             motor = cls._DEFAULT_MOTOR_ONE_INSTANCE
         elif index == 2:
             if cls._DEFAULT_MOTOR_TWO_INSTANCE is None:
                 cls._DEFAULT_MOTOR_TWO_INSTANCE = cls(
                     Motor(direction_pin=6, speed_pin=7),
-                    Encoder(index=1, encAPin=4, encBPin=5)
+                    Encoder(index=1, encAPin=4, encBPin=5),
+                    1
                 )
             motor = cls._DEFAULT_MOTOR_TWO_INSTANCE
         elif index == 3:
             if cls._DEFAULT_MOTOR_THREE_INSTANCE is None:
                 cls._DEFAULT_MOTOR_THREE_INSTANCE = cls(
                     Motor(direction_pin=10, speed_pin=11),
-                    Encoder(index=2, encAPin=8, encBPin=9)
+                    Encoder(index=2, encAPin=8, encBPin=9),
+                    2
                 )
             motor = cls._DEFAULT_MOTOR_THREE_INSTANCE
         elif index == 4:
             if cls._DEFAULT_MOTOR_FOUR_INSTANCE is None:
                 cls._DEFAULT_MOTOR_FOUR_INSTANCE = cls(
                     Motor(direction_pin=14, speed_pin=15),
-                    Encoder(index=3, encAPin=12, encBPin=13)
+                    Encoder(index=3, encAPin=12, encBPin=13),
+                    3
                 )
             motor = cls._DEFAULT_MOTOR_FOUR_INSTANCE
         else:
             return Exception("Invalid motor index")
         return motor
     
-    def __init__(self, motor: Motor, encoder: Encoder):
-        
+    def __init__(self, motor: Motor, encoder: Encoder, index: int = 0):
+        self.index = index
         self._motor = motor
         self._encoder = encoder
 
         self.target_speed = None
         self.DEFAULT_SPEED_CONTROLLER = PID(
-            kp=0.035,
+            kp=0.02,
             ki=0.03,
             kd=0,
         )
@@ -70,8 +74,9 @@ class EncodedMotor:
         self.speed = 0
         # Use a virtual timer so we can leave the hardware timers up for the user
         self.updateTimer = Timer(-1)
+        self.updateHz = 50
         # If the update timer is not running, start it at 50 Hz (20ms updates)
-        self.updateTimer.init(period=20, callback=lambda t:self._update())
+        self.updateTimer.init(freq=self.updateHz, callback=lambda t:self._update())
 
     def set_effort(self, effort: float):
         """
@@ -114,7 +119,7 @@ class EncodedMotor:
         :rtype: float
         """
         # Convert from counts per 20ms to rpm (60 sec/min, 50 Hz)
-        return (self.speed*(60*50))/self._encoder.resolution
+        return (self.speed*(60*self.updateHz))/self._encoder.resolution
 
     def set_speed(self, speed_rpm: float = None):
         """
@@ -127,9 +132,10 @@ class EncodedMotor:
         if speed_rpm is None or speed_rpm == 0:
             self.target_speed = None
             self.set_effort(0)
+            self.speedController.clear_history()
             return
         # Convert from rev per min to counts per 20ms (60 sec/min, 50 Hz)
-        self.target_speed = speed_rpm*self._encoder.resolution/(60*50)
+        self.target_speed = speed_rpm*self._encoder.resolution/(60*self.updateHz)
         # self.speedController.clear_history()
         self.prev_position = self.get_position_counts()
 
