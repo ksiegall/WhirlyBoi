@@ -1,4 +1,3 @@
-
 import time
 import select
 import sys
@@ -20,8 +19,8 @@ for motor in motors:
     motor.set_speed(0)
 
 # Default speed of the motors per pico
-defaultSpeedPerMotor = [[135, 145, 150, 165],
-                        [185, 180, 220, 240],
+defaultSpeedPerMotor = [[150, 160, 150, 165],
+                        [185, 180, 260, 240],
                         [135, 135, 160, 150]]
 
 thisPico = 0 # This is the index of the pico that this script is running on
@@ -45,31 +44,33 @@ noteDictionary = {
 
     # Fundamentals
 
-    60: (0, 0, 100), # Pico 0, Motor One (index 0), 230 rpm
-    61: (0, 1, 100), # Pico 0, Motor Two (index 1), 230 rpm
-    62: (0, 2, 105), # Pico 0, Motor Three (index 2), 230 rpm
+    # 60: (0, 0, 100), # Pico 0, Motor One (index 0), 230 rpm
+    # 61: (0, 1, 100), # Pico 0, Motor Two (index 1), 230 rpm
+    # 62: (0, 2, 105), # Pico 0, Motor Three (index 2), 230 rpm
     63: (0, 3, 115), # Pico 0, Motor Four (index 3), 230 rpm
 
-    64: (1, 0, 130), # Pico 1, Motor One (index 0), 230 rpm
-    65: (1, 1, 140), # Pico 1, Motor Two (index 1), 230 rpm
-    66: (1, 2, 160), # Pico 1, Motor Three (index 2), 230 rpm
-    67: (1, 3, 170), # Pico 1, Motor Four (index 3), 230 rpm
+    64: (1, 0, 135), # Pico 1, Motor One (index 0), 230 rpm
+    65: (1, 1, 170), # Pico 1, Motor Two (index 1), 230 rpm
+    66: (1, 2, 165), # Pico 1, Motor Three (index 2), 230 rpm
+    67: (1, 3, 175), # Pico 1, Motor Four (index 3), 230 rpm
 
     68: (2, 0, 185), # Pico 2, Motor One (index 0), 230 rpm
     69: (2, 1, 195), # Pico 2, Motor Two (index 1), 230 rpm
     70: (2, 2, 230), # Pico 2, Motor Three (index 2), 230 rpm
     71: (2, 3, 240), # Pico 2, Motor Four (index 3), 230 rpm
     
+
+    72: (0, 0, 300), # Pico 0, Motor One (index 0), 460 rpm
+    73: (0, 1, 320), # Pico 0, Motor Two (index 1), 460 rpm
+
     # First Harmonics
 
-    72: (0, 0, 170), # Pico 0, Motor One (index 0), 460 rpm
-    73: (0, 1, 180), # Pico 0, Motor Two (index 1), 460 rpm
-    74: (0, 2, 210), # Pico 0, Motor Three (index 2), 460 rpm
+    74: (0, 2, 350), # Pico 0, Motor Three (index 2), 460 rpm
     75: (0, 3, 220), # Pico 0, Motor Four (index 3), 460 rpm
 
     76: (1, 0, 235), # Pico 1, Motor One (index 0), 460 rpm
     77: (1, 1, 250), # Pico 1, Motor Two (index 1), 460 rpm
-    78: (1, 2, 275), # Pico 1, Motor Three (index 2), 460 rpm
+    78: (1, 2, 285), # Pico 1, Motor Three (index 2), 460 rpm
     79: (1, 3, 290), # Pico 1, Motor Four (index 3), 460 rpm
 }
 
@@ -93,10 +94,13 @@ while True:
         
         if note == 97 or note == 36:
             if velocity == 0:
+                # Start at the end of the start note
                 startup_sequence()
         elif note == 38:
-            for motor in motors:
-                motor.set_speed(0)
+            if velocity != 0:
+                # Stop all motors at the start of the kill note
+                for motor in motors:
+                    motor.set_speed(0)
         # If the character is a valid note
         elif note in noteDictionary.keys():
             noteData = noteDictionary[note]
