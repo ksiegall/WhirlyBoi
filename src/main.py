@@ -18,9 +18,9 @@ for motor in motors:
 
 
 # Default speed of the motors per pico
-defaultSpeedPerMotor = [[150, 160, 150, 165], # pico 0
-                        [185, 180, 260, 240], # pico 1
-                        [135, 135, 160, 150]] # pico 2
+defaultSpeedPerMotor = [[200, 200, 250, 180], # pico 0
+                        [190, 180, 250, 240], # pico 1
+                        [140, 150, 170, 180]] # pico 2
 
 
 def startup_sequence(thisPico):
@@ -44,19 +44,19 @@ def startup_sequence(thisPico):
 noteDictionary = {
     # Fundamentals
 
-    63: (0, 3, 115), # Pico 0, Motor Four (index 3), Note D#4
+    63: (0, 3, 130), # Pico 0, Motor Four (index 3), Note D#4
 
     64: (1, 0, 135), # Pico 1, Motor One (index 0), Note E4
-    65: (1, 1, 170), # Pico 1, Motor Two (index 1), Note F4
-    66: (1, 2, 165), # Pico 1, Motor Three (index 2), Note F#4
+    65: (1, 1, 140), # Pico 1, Motor Two (index 1), Note F4
+    66: (1, 2, 160), # Pico 1, Motor Three (index 2), Note F#4
     67: (1, 3, 175), # Pico 1, Motor Four (index 3), Note G4
 
     68: (2, 0, 185), # Pico 2, Motor One (index 0), Note G#4
-    69: (2, 1, 195), # Pico 2, Motor Two (index 1), Note A4
+    69: (2, 1, 200), # Pico 2, Motor Two (index 1), Note A4
     70: (2, 2, 230), # Pico 2, Motor Three (index 2), Note A#4
-    71: (2, 3, 240), # Pico 2, Motor Four (index 3), Note B4
+    71: (2, 3, 250), # Pico 2, Motor Four (index 3), Note B4
 
-    72: (0, 0, 300), # Pico 0, Motor One (index 0), Note C5
+    72: (0, 0, 280), # Pico 0, Motor One (index 0), Note C5
     73: (0, 1, 320), # Pico 0, Motor Two (index 1), Note C#5
     74: (0, 2, 350), # Pico 0, Motor Three (index 2), Note D5
 
@@ -64,10 +64,10 @@ noteDictionary = {
 
     75: (0, 3, 220), # Pico 0, Motor Four (index 3), Note D#5
 
-    76: (1, 0, 235), # Pico 1, Motor One (index 0), Note E5
+    76: (1, 0, 250), # Pico 1, Motor One (index 0), Note E5
     77: (1, 1, 250), # Pico 1, Motor Two (index 1), Note F5
     78: (1, 2, 285), # Pico 1, Motor Three (index 2), Note F#5
-    79: (1, 3, 290), # Pico 1, Motor Four (index 3), Note G5
+    79: (1, 3, 300), # Pico 1, Motor Four (index 3), Note G5
 
     # 80: (2, 0, 300), # Pico 2, Motor One (index 0), Note G#5
 }
@@ -134,5 +134,5 @@ def manualInput():
             motors[int(usr_input[0])].set_speed_controller(PID(kp=float(usr_input[1]), ki=float(usr_input[2])))
 
 
-# midiInput()
-manualInput()
+midiInput()
+# manualInput()
