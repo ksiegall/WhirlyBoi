@@ -20,7 +20,7 @@ for motor in motors:
     motor.set_speed(0)
 
 # Default speed of the motors per pico
-defaultSpeedPerMotor = [[135, 140, 150, 165],
+defaultSpeedPerMotor = [[135, 145, 150, 165],
                         [185, 180, 220, 240],
                         [135, 135, 160, 150]]
 
@@ -51,7 +51,7 @@ noteDictionary = {
     63: (0, 3, 115), # Pico 0, Motor Four (index 3), 230 rpm
 
     64: (1, 0, 130), # Pico 1, Motor One (index 0), 230 rpm
-    65: (1, 1, 150), # Pico 1, Motor Two (index 1), 230 rpm
+    65: (1, 1, 140), # Pico 1, Motor Two (index 1), 230 rpm
     66: (1, 2, 160), # Pico 1, Motor Three (index 2), 230 rpm
     67: (1, 3, 170), # Pico 1, Motor Four (index 3), 230 rpm
 
@@ -69,7 +69,7 @@ noteDictionary = {
 
     76: (1, 0, 235), # Pico 1, Motor One (index 0), 460 rpm
     77: (1, 1, 250), # Pico 1, Motor Two (index 1), 460 rpm
-    78: (1, 2, 265), # Pico 1, Motor Three (index 2), 460 rpm
+    78: (1, 2, 275), # Pico 1, Motor Three (index 2), 460 rpm
     79: (1, 3, 290), # Pico 1, Motor Four (index 3), 460 rpm
 }
 
@@ -79,6 +79,7 @@ poll_obj = select.poll()
 poll_obj.register(sys.stdin,1)
 # Pin object for controlling onboard LED
 
+# Uncomment for MIDI input
 while True:
     # Check if there is any data available on sys.stdin without blocking
     if poll_obj.poll(0):
@@ -86,46 +87,38 @@ while True:
         ch = sys.stdin.read(2)
         note = ord(ch[0])
         velocity = ord(ch[1])
-        if note == 97 or note == 36:
-            startup_sequence()
-            break
-
-# while True:
-#     # Check if there is any data available on sys.stdin without blocking
-#     if poll_obj.poll(0):
-#         # Read one character from sys.stdin
-#         ch = sys.stdin.read(2)
-#         note = ord(ch[0])
-#         velocity = ord(ch[1])
-#         # Toggle the state of the LED
-#         # Print a message indicating that the LED has been toggled
-#         print (f"Note: {ord(ch[0])} Velocity: {ord(ch[1])}")
+        # Toggle the state of the LED
+        # Print a message indicating that the LED has been toggled
+        print (f"Note: {ord(ch[0])} Velocity: {ord(ch[1])}")
         
-#         if note == 37:
-#             for motor in motors:
-#                 motor.set_speed(0)
+        if note == 97 or note == 36:
+            if velocity == 0:
+                startup_sequence()
+        elif note == 38:
+            for motor in motors:
+                motor.set_speed(0)
+        # If the character is a valid note
+        elif note in noteDictionary.keys():
+            noteData = noteDictionary[note]
+            # If the note can be played on this pico
+            if noteData[0] == thisPico:
+                # If the velocity is 0, stop the note by setting a default speed
+                if velocity == 0:
+                    motors[noteData[1]].set_speed(defaultSpeedPerMotor[thisPico][noteData[1]])
+                else:
+                    # Set the speed of the motor based on the dictionary
+                    motors[noteData[1]].set_speed(noteData[2])
+    # # Small delay to avoid high CPU usage in the loop
+    time.sleep(0.005)
 
-#         # If the character is a valid note
-#         if note in noteDictionary.keys():
-#             noteData = noteDictionary[note]
-#             # If the note can be played on this pico
-#             if noteData[0] == thisPico:
-#                 # If the velocity is 0, stop the note by setting a default speed
-#                 if velocity == 0:
-#                     motors[noteData[1]].set_speed(defaultSpeedPerMotor[thisPico][noteData[1]])
-#                 else:
-#                     # Set the speed of the motor based on the dictionary
-#                     motors[noteData[1]].set_speed(noteData[2])
-#     # # Small delay to avoid high CPU usage in the loop
-#     time.sleep(0.005)
-
-while True:
-    usr_input = input()
+# Uncomment for manual control
+# while True:
+#     usr_input = input()
     
-    usr_input = usr_input.split(" ")
-    if len(usr_input) == 1:
-         print(f"Motor {usr_input[0]}: Speed (rpm) - {motors[int(usr_input[0])].get_speed()}, Target Speed (enc/20ms) - {motors[int(usr_input[0])].target_speed}. Speed (enc/20ms) {motors[int(usr_input[0])].speed}")
-    elif len(usr_input) == 2:
-        motors[int(usr_input[0])].set_speed(int(usr_input[1]))
-    elif len(usr_input) == 3:
-        motors[int(usr_input[0])].set_speed_controller(PID(kp=float(usr_input[1]), ki=float(usr_input[2])))
+#     usr_input = usr_input.split(" ")
+#     if len(usr_input) == 1:
+#          print(f"Motor {usr_input[0]}: Speed (rpm) - {motors[int(usr_input[0])].get_speed()}, Target Speed (enc/20ms) - {motors[int(usr_input[0])].target_speed}. Speed (enc/20ms) {motors[int(usr_input[0])].speed}")
+#     elif len(usr_input) == 2:
+#         motors[int(usr_input[0])].set_speed(int(usr_input[1]))
+#     elif len(usr_input) == 3:
+#         motors[int(usr_input[0])].set_speed_controller(PID(kp=float(usr_input[1]), ki=float(usr_input[2])))
