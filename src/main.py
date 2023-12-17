@@ -83,6 +83,7 @@ def midiInput():
     # Read the index of the pico from the config file
     with open('config.txt') as f:
         thisPico = int(f.read())
+        print(f'thisPico: {thisPico}')
     
     while True:
         # Check if there is any data available on sys.stdin without blocking
